@@ -2,6 +2,7 @@ const express = require("express");
 const { Subject, validate } = require("../model/Subject");
 const router = express.Router();
 const mongoose = require("mongoose");
+const { Teacher } = require("../model/Teacher");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -41,7 +42,17 @@ router.post("/", async (req, res) => {
       subjectName: subjectName,
       grades: grades,
     });
+
+    const subject = await Teacher.findById(req.body.teachers);
+    if (!subject) {
+      return res.status(404).send("Subject not  found in Teacher");
+    }
+    subject.subject.push([newSubject._id]);
+
+    await subject.save();
+
     await newSubject.save();
+
     res.status(201).send(newSubject);
   } catch (err) {
     console.error("Error creating subject:", err); // Log the error

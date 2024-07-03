@@ -15,6 +15,12 @@ const gradeSchema = new Schema({
       ref: "Teacher",
     },
   ],
+  students: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Student",
+    },
+  ],
 });
 
 const Grade = mongoose.model("Grade", gradeSchema);
@@ -23,6 +29,7 @@ function vaildateGrade(grade) {
   const schema = Joi.object({
     gradeName: Joi.string().required(),
     teachers: Joi.array().items(Joi.string().optional()).optional(),
+    students: Joi.array().items(Joi.string().optional()).optional(),
   });
 
   return schema.validate(grade);

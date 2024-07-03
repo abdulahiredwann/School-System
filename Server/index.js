@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const subject = require("./router/Subject");
 const teacher = require("./router/Teacher");
 const grade = require("./router/Grade");
+const student = require("./router/Student");
 const app = express();
 
 app.use(express.json());
@@ -21,6 +22,7 @@ mongoose
 app.use("/subject", subject);
 app.use("/teacher", teacher);
 app.use("/grade", grade);
+app.use("/student", student);
 
 app.listen(3000, () => {
   console.log("Server is listening ");

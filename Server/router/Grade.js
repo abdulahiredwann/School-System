@@ -16,6 +16,7 @@ router.post("/", async (req, res) => {
     let newGrade = new Grade({
       gradeName: req.body.gradeName,
       teachers: req.body.teachers,
+      students: req.body.students,
     });
 
     await newGrade.save();

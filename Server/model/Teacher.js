@@ -4,7 +4,7 @@ const ObjectId = Schema.Types.ObjectId;
 const Joi = require("joi");
 
 const teacherSchema = new Schema({
-  name: {
+  teacherName: {
     type: String,
     required: true,
   },
@@ -17,21 +17,30 @@ const teacherSchema = new Schema({
     type: String,
     required: true,
   },
-  subject: {
-    type: ObjectId,
-    ref: "Subject",
-    required: true,
-  },
+  grades: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Grade",
+    },
+  ],
+  subject: [
+    {
+      type: ObjectId,
+      ref: "Subject",
+      required: true,
+    },
+  ],
 });
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 
 function validateTeacher(teacher) {
   const schema = Joi.object({
-    name: Joi.string().min(3).max(100).required(),
+    teacherName: Joi.string().min(3).max(100).required(),
     username: Joi.string().min(4).max(100).required(),
     password: Joi.string().min(6).max(1024).required(),
-    subject: Joi.required(), // Ensure subject is a single ObjectId
+    subject: Joi.optional(),
+    grades: Joi.optional(),
   });
 
   return schema.validate(teacher);

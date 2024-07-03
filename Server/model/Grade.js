@@ -1,9 +1,32 @@
+const Joi = require("joi");
+const { string } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 const gradeSchema = new Schema({
-  name: String,
+  gradeName: {
+    type: String,
+    required: true,
+  },
+  teachers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Teacher",
+    },
+  ],
 });
 
-module.exports = mongoose.model("Grade", gradeSchema);
+const Grade = mongoose.model("Grade", gradeSchema);
+
+function vaildateGrade(grade) {
+  const schema = Joi.object({
+    gradeName: Joi.string().required(),
+    teachers: Joi.array().items(Joi.string().optional()).optional(),
+  });
+
+  return schema.validate(grade);
+}
+
+module.exports.validate = vaildateGrade;
+module.exports.Grade = Grade;

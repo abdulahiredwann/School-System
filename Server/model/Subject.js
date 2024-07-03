@@ -1,20 +1,34 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Joi = require("joi");
+const ObjectId = Schema.Types.ObjectId;
 
-const subjectSchema = new Schema({
-  subject: {
+const SubjectSchema = new Schema({
+  subjectName: {
     type: String,
     required: true,
-    unique: true, // Add unique constraint if subjects should be unique
+    unique: true, // Add unique index
   },
+  teachers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Teacher",
+    },
+  ],
+  grades: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Grade",
+    },
+  ],
 });
-
-const Subject = mongoose.model("Subject", subjectSchema);
+const Subject = mongoose.model("Subject", SubjectSchema);
 
 function validateSubject(subject) {
   const schema = Joi.object({
-    subject: Joi.string().required(),
+    subjectName: Joi.string().required(),
+    teachers: Joi.array().items(Joi.string().optional()).optional(),
+    grades: Joi.array().items(Joi.string().optional()).optional(),
   });
 
   return schema.validate(subject);

@@ -9,11 +9,42 @@ function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
+// Get All Teacher
 router.get("/", async (req, res) => {
-  const teachers = await Teacher.find().sort("name");
-  res.status(201).send(teachers);
+  try {
+    const teachers = await Teacher.find().sort("teacherName");
+    const pickedTeachers = teachers.map((teacher) =>
+      _.pick(teacher, ["teacherName", "grades", "subject"])
+    );
+    res.status(200).send(pickedTeachers);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
 });
 
+// Get Teacher by username
+router.get("/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    let isvalid = await Teacher.findOne({ username: username });
+    if (!isvalid) {
+      return res.status(400).send("Invald uername");
+    }
+
+    let teacher = await Teacher.findOne({ username: username });
+    const pickedTeachers = _.pick(teacher, [
+      "teacherName",
+      "grades",
+      "subject",
+    ]);
+    res.status(200).send(pickedTeachers);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+});
 router.post("/", async (req, res) => {
   try {
     const { error } = validate(req.body); // Validate the request body
@@ -49,6 +80,67 @@ router.post("/", async (req, res) => {
     console.error(err);
     res.status(500).send("Server error, please try again later");
   }
+});
+
+// Update Teacher information
+router.put("/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const teacher = await Teacher.findOne({ username: username });
+
+    if (!teacher) {
+      return res.status(404).send("Invald uername");
+    }
+    const { error } = validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    if (!isValidObjectId(req.body.subject)) {
+      return res.status(400).send("Invalid Subject ID");
+    }
+    // if (!isValidObjectId(req.body.grades)) {
+    //   return res.status(400).send("Invalid Subject ID");
+    // }
+
+    teacher.set({
+      teacherName: req.body.teacherName,
+      username: req.body.username,
+      password: req.body.password,
+      grades: req.body.grades,
+      subject: req.body.subject,
+    });
+
+    await teacher.save();
+    res.status(200).send(teacher);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Delete Teacher
+router.delete("/:username", async (req, res) => {
+  const { username } = req.params;
+  const teacher = await Teacher.findOne({ username: username });
+
+  if (!teacher) {
+    return res.status(404).send("Username Not Found");
+  }
+
+  // Find all subjects that reference this teacher
+  const subjects = await Subject.find({ teachers: teacher._id });
+
+  // Update each subject to remove the teacher
+  const updatePromises = subjects.map(async (subject) => {
+    subject.teachers.pull(teacher._id);
+    await subject.save();
+  });
+
+  // Wait for all subject updates to complete
+  await Promise.all(updatePromises);
+  const deleteTeacher = await Teacher.findOneAndDelete({ username: username });
+
+  res.status(200).send(`Deleted Teacher with name :${deleteTeacher}`);
 });
 
 module.exports = router;

@@ -37,13 +37,6 @@ function vaildateStudent(student) {
     username: Joi.string().required().min(4).max(100),
     password: Joi.string().required().min(6).max(1024),
     grade: Joi.required(),
-    results: Joi.array()
-      .items(
-        Joi.object({
-          subject: Joi.string().optional(),
-        })
-      )
-      .optional(),
   });
 
   return schema.validate(student);

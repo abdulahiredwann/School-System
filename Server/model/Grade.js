@@ -35,5 +35,14 @@ function vaildateGrade(grade) {
   return schema.validate(grade);
 }
 
+function validateUpdate(grade) {
+  const schema = Joi.object({
+    gradeName: Joi.string().required(),
+  });
+
+  return schema.validate(grade);
+}
+
 module.exports.validate = vaildateGrade;
+module.exports.validateUpdate = validateUpdate;
 module.exports.Grade = Grade;

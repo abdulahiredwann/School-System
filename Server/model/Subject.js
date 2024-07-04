@@ -15,20 +15,18 @@ const SubjectSchema = new Schema({
       ref: "Teacher",
     },
   ],
-  grades: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Grade",
-    },
-  ],
 });
 const Subject = mongoose.model("Subject", SubjectSchema);
 
 function validateSubject(subject) {
   const schema = Joi.object({
-    subjectName: Joi.string().required(),
-    teachers: Joi.array().items(Joi.string().optional()).optional(),
-    grades: Joi.array().items(Joi.string().optional()).optional(),
+    subjectName: Joi.string()
+      .pattern(/^[A-Za-z\s]+$/)
+      .required()
+      .messages({
+        "string.pattern.base":
+          "Subject name must contain letters and spaces only",
+      }),
   });
 
   return schema.validate(subject);

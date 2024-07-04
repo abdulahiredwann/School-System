@@ -49,5 +49,17 @@ function vaildateStudent(student) {
   return schema.validate(student);
 }
 
+function validateStudentUpdate(student) {
+  const schema = Joi.object({
+    studentName: Joi.string().required(),
+    username: Joi.string().required().min(4).max(100),
+    password: Joi.string().required().min(6).max(1024),
+  });
+
+  return schema.validate(student);
+}
+
 module.exports.validate = vaildateStudent;
+module.exports.validateUpdate = validateStudentUpdate;
+
 module.exports.Student = Student;

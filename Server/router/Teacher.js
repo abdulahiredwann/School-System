@@ -4,13 +4,13 @@ const _ = require("lodash");
 const router = express.Router();
 const mongoose = require("mongoose");
 const { Subject } = require("../model/Subject");
-
+const { admin, auth } = require("../Middleware/AuthAdmin");
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
-// Get All Teacher
-router.get("/", async (req, res) => {
+// Get All Teacher, only for admin
+router.get("/", [auth, admin], async (req, res) => {
   try {
     const teachers = await Teacher.find().sort("teacherName");
     const pickedTeachers = teachers.map((teacher) =>
@@ -23,8 +23,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get Teacher by username
-router.get("/:username", async (req, res) => {
+// Get Teacher by username only if they login
+router.get("/:username", [auth], async (req, res) => {
   try {
     const { username } = req.params;
 
@@ -45,13 +45,15 @@ router.get("/:username", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-router.post("/", async (req, res) => {
+
+// Add Teacher only allow for Head office of Admin
+router.post("/", [auth, admin], async (req, res) => {
   try {
     const { error } = validate(req.body); // Validate the request body
     if (error) return res.status(400).send(error.details[0].message);
     let username = await Teacher.findOne({ username: req.body.username });
     if (username) {
-      return res.status(400).send("Username alredt refisterd");
+      return res.status(400).send("Username alredt Registerd");
     }
     if (!isValidObjectId(req.body.subject)) {
       return res.status(400).send("Invalid Subject ID");
@@ -82,8 +84,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update Teacher information
-router.put("/:username", async (req, res) => {
+// Update Teacher information only   Admin
+router.put("/:username", [auth, admin], async (req, res) => {
   try {
     const { username } = req.params;
 
@@ -118,8 +120,8 @@ router.put("/:username", async (req, res) => {
   }
 });
 
-// Delete Teacher
-router.delete("/:username", async (req, res) => {
+// Delete Teacher only for admin
+router.delete("/:username", [auth, admin], async (req, res) => {
   const { username } = req.params;
   const teacher = await Teacher.findOne({ username: username });
 

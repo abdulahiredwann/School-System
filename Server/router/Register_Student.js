@@ -5,13 +5,14 @@ const { Student, validate, validateUpdate } = require("../model/Student");
 const { Grade } = require("../model/Grade");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const { admin, auth } = require("../Middleware/AuthAdmin");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
-// Register New Student
-router.post("/", async (req, res) => {
+// Register New Student only for admin
+router.post("/", [auth, admin], async (req, res) => {
   try {
     let { studentName, username, password, grade } = req.body;
 

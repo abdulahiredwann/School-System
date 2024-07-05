@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
 
 const teacherSchema = new Schema({
   teacherName: {
@@ -31,6 +32,14 @@ const teacherSchema = new Schema({
     },
   ],
 });
+
+teacherSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign(
+    { _id: this._id, teacherName: this.teacherName },
+    process.env.jwtPrivateKey
+  );
+  return token;
+};
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 

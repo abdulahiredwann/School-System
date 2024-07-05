@@ -4,12 +4,22 @@ const mongoose = require("mongoose");
 const { Student, validate, validateUpdate } = require("../model/Student");
 const { Grade } = require("../model/Grade");
 const _ = require("lodash");
+const {
+  auth_student,
+  authorized_student,
+} = require("../Middleware/Student_Auth");
+const { auth, admin } = require("../Middleware/AuthAdmin");
+const {
+  auth_teacher,
+  authorized_teacher,
+} = require("../Middleware/Teacher_Auth");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
-// Get All Students
-router.get("/", async (req, res) => {
+
+// Get All Students only for Admin
+router.get("/admin", [auth, admin], async (req, res) => {
   try {
     const students = await Student.find().sort("studentName");
 
@@ -23,47 +33,71 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get Student by given username
-
-router.get("/:username", async (req, res) => {
+// Get All Students only teachers
+router.get("/teacher", [auth_teacher, authorized_teacher], async (req, res) => {
   try {
-    const { username } = req.params;
+    const students = await Student.find().sort("studentName");
 
-    const student = await Student.findOne({ username: username });
-    if (!student) {
-      return res.status(404).send("Student Not Found");
-    }
-    const pickedStudent = _.pick(student, [
-      "studentName",
-      "username",
-      "grade",
-      "results",
-    ]);
-
-    res.status(200).send(pickedStudent);
+    const pickedStudents = students.map((Student) =>
+      _.pick(Student, ["studentName", "username", "grade", "results"])
+    );
+    res.status(200).send(pickedStudents);
   } catch (err) {
     console.log(err);
-    res.status(500).send("Server Error!");
+    res.status(500).send("Server Error");
   }
 });
-// Get Student Result by Given username
 
-router.get("/:username/results", async (req, res) => {
-  const { username } = req.params;
+// Get Student by given username ;only student access there own they can't see other
 
-  const decodedusername = decodeURIComponent(username);
-  const student = await Student.findOne({ username: username });
-  if (!student) {
-    return res.status(404).send("Student not FOund!");
+router.get(
+  "/:username",
+  [auth_student, authorized_student],
+  async (req, res) => {
+    try {
+      const { username } = req.params;
+
+      const student = await Student.findOne({ username: username });
+      if (!student) {
+        return res.status(404).send("Student Not Found");
+      }
+
+      const pickedStudent = _.pick(student, [
+        "studentName",
+        "username",
+        "grade",
+        "results",
+      ]);
+
+      res.status(200).send(pickedStudent);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error!");
+    }
   }
-  const studentResult = await Student.findOne({
-    username: decodedusername,
-  }).populate("results");
+);
+// Get Student Result by Given username:for only student can see there result they can't see for other ,admin and teacher can see
 
-  res.status(200).send(studentResult.results);
-});
-// Add Student
-router.post("/", async (req, res) => {
+router.get(
+  "/:username/results",
+  [auth_student, authorized_student],
+  async (req, res) => {
+    const { username } = req.params;
+
+    const decodedusername = decodeURIComponent(username);
+    const student = await Student.findOne({ username: username });
+    if (!student) {
+      return res.status(404).send("Student not FOund!");
+    }
+    const studentResult = await Student.findOne({
+      username: decodedusername,
+    }).populate("results");
+
+    res.status(200).send(studentResult.results);
+  }
+);
+// Add Student :only for admin
+router.post("/", [auth, admin], async (req, res) => {
   try {
     const { error } = validate(req.body);
     if (!isValidObjectId(req.body.grade)) {
@@ -101,35 +135,39 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update Student There information except RESULT
-router.put("/:username", async (req, res) => {
-  try {
-    const { username } = req.params;
+// Update Student There information except RESULT:they can there own but they can't change other ,admin can
+router.put(
+  "/:username",
+  [auth_student, authorized_student],
+  async (req, res) => {
+    try {
+      const { username } = req.params;
 
-    const student = await Student.findOne({ username: username });
-    if (!student) {
-      return res.status(404).send("Student Not Found!");
-    }
-    const { error } = validateUpdate(req.body);
-    if (error) {
-      return res.status(400).send(error.details[0].message);
-    }
-    student.set({
-      studentName: req.body.studentName,
-      username: req.body.username,
-      password: req.body.password,
-    });
+      const student = await Student.findOne({ username: username });
+      if (!student) {
+        return res.status(404).send("Student Not Found!");
+      }
+      const { error } = validateUpdate(req.body);
+      if (error) {
+        return res.status(400).send(error.details[0].message);
+      }
+      student.set({
+        studentName: req.body.studentName,
+        username: req.body.username,
+        password: req.body.password,
+      });
 
-    await student.save();
-    res.status(200).send(_.omit(student.toObject(), ["password"]));
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Server Error!");
+      await student.save();
+      res.status(200).send(_.omit(student.toObject(), ["password"]));
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error!");
+    }
   }
-});
+);
 
 // Delete Student it allow for Only Admin
-router.delete("/:username", async (req, res) => {
+router.delete("/:username", [auth, admin], async (req, res) => {
   try {
     const { username } = req.params;
 
@@ -147,4 +185,5 @@ router.delete("/:username", async (req, res) => {
     res.status(500).send("Server Error!");
   }
 });
+
 module.exports = router;

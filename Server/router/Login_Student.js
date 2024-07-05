@@ -5,6 +5,7 @@ const { Student, validate, validateUpdate } = require("../model/Student");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+
 function validateLogin(data) {
   const schema = Joi.object({
     username: Joi.string()
@@ -27,7 +28,7 @@ router.post("/", async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     let student = await Student.findOne({ username: username });
-    if (student) {
+    if (!student) {
       return res.status(400).send("Invalid email or password");
     }
 
@@ -36,7 +37,8 @@ router.post("/", async (req, res) => {
       return res.status(400).send("Invalid email or password");
     }
 
-    res.send("Welcome");
+    const token = student.generateAuthToken();
+    res.status(200).send(token);
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error");

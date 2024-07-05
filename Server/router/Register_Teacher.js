@@ -5,12 +5,13 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const { Subject } = require("../model/Subject");
 const bcrypt = require("bcrypt");
+const { admin, auth } = require("../Middleware/AuthAdmin");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
-// Register New Teacher
-router.post("/", async (req, res) => {
+// Register New Teacher only for admin
+router.post("/", [auth, admin], async (req, res) => {
   try {
     let { teacherName, username, password, grades, subject } = req.body;
 

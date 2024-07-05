@@ -5,6 +5,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
 
 function validateLogin(data) {
   const schema = Joi.object({
@@ -25,6 +26,7 @@ router.post("/", async (req, res) => {
   try {
     const { username, password } = req.body;
     const { error } = validateLogin(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
     const teacher = await Teacher.findOne({ username: username });
     if (!teacher) {
@@ -35,7 +37,8 @@ router.post("/", async (req, res) => {
       return res.status(400).send("Invalid username or password");
     }
 
-    res.send("Welcome");
+    const token = teacher.generateAuthToken();
+    res.status(200).send(token);
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error!");

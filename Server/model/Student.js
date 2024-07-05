@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const Joi = require("joi");
 const { result } = require("lodash");
-
+const jwt = require("jsonwebtoken");
 const resultSchema = new Schema({
   subject: {
     type: ObjectId,
@@ -29,6 +29,15 @@ const studentSchema = new Schema({
   },
   results: [resultSchema],
 });
+
+studentSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign(
+    { _id: this._id, username: this.username },
+    process.env.jwtPrivateKey
+  );
+  return token;
+};
+
 const Student = mongoose.model("Student", studentSchema);
 
 function vaildateStudent(student) {

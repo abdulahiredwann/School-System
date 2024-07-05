@@ -3,13 +3,15 @@ const { Subject, validate } = require("../model/Subject");
 const router = express.Router();
 const mongoose = require("mongoose");
 const { Teacher } = require("../model/Teacher");
+const { admin, auth } = require("../Middleware/AuthAdmin");
+
 const _ = require("lodash");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 // Get All subject
-router.get("/", async (req, res) => {
+router.get("/", [auth], async (req, res) => {
   try {
     const subjects = await Subject.find().sort("subjectName");
     res.send(subjects);
@@ -20,7 +22,7 @@ router.get("/", async (req, res) => {
 });
 
 // Get Subject by name
-router.get("/:subjectName", async (req, res) => {
+router.get("/:subjectName", [auth], async (req, res) => {
   const { subjectName } = req.params;
   const subject = await Subject.findOne({ subjectName: subjectName });
   if (!subject) {
@@ -31,7 +33,7 @@ router.get("/:subjectName", async (req, res) => {
 });
 
 // Add Subject
-router.post("/", async (req, res) => {
+router.post("/", [auth, admin], async (req, res) => {
   try {
     const { subjectName } = req.body;
     const { error } = validate(req.body);
@@ -58,7 +60,7 @@ router.post("/", async (req, res) => {
 });
 
 // Update Subject
-router.put("/:subjectName", async (req, res) => {
+router.put("/:subjectName", [auth, admin], async (req, res) => {
   try {
     const { subjectName } = req.params;
     const decodedSubjectName = decodeURIComponent(subjectName);
@@ -87,7 +89,7 @@ router.put("/:subjectName", async (req, res) => {
 });
 
 // Delete Subject
-router.delete("/:subjectName", async (req, res) => {
+router.delete("/:subjectName", [auth, admin], async (req, res) => {
   const { subjectName } = req.params;
   const decodedSubjectName = decodeURIComponent(subjectName);
 

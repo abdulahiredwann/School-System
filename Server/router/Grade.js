@@ -3,12 +3,13 @@ const { validate, Grade, validateUpdate } = require("../model/Grade");
 const router = express.Router();
 const _ = require("lodash");
 const mongoose = require("mongoose");
+const { admin, auth } = require("../Middleware/AuthAdmin");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 // Get All Grades
-router.get("/", async (req, res) => {
+router.get("/", [auth, admin], async (req, res) => {
   try {
     const grades = await Grade.find().sort("gradeName");
     res.status(200).send(grades);

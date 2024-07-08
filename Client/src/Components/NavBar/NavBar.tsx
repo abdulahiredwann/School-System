@@ -103,9 +103,9 @@ const NavBar: React.FC = () => {
             fontSize={"sm"}
             fontWeight={400}
             variant={"link"}
-            to={"/signin"}
+            to={"/studentlogin"}
           >
-            Sign In For Student
+            Login For Student
           </Button>
           <Button
             as={RouterLink}
@@ -114,12 +114,12 @@ const NavBar: React.FC = () => {
             fontWeight={600}
             color={"white"}
             bg={"green.400"}
-            to={"/signup"}
+            to={"/loginteacher"}
             _hover={{
               bg: "green.300",
             }}
           >
-            Sign In for Teacher
+            Login for Teacher
           </Button>
         </Stack>
       </Flex>

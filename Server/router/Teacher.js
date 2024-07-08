@@ -24,7 +24,7 @@ router.get("/", [auth, admin], async (req, res) => {
 });
 
 // Get Teacher by username only if they login
-router.get("/:username", [auth], async (req, res) => {
+router.get("/:username", async (req, res) => {
   try {
     const { username } = req.params;
 

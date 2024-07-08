@@ -14,7 +14,7 @@ const useValidation = () => {
         const response = await axios.post("http://localhost:3000/verify", { token });
         if (!response.data.valid) throw new Error("Invalid Token");
       } catch (err) {
-        navigate("/adminlogin"); // Redirect to login page if token is invalid
+        navigate("/"); // Redirect to login page if token is invalid
       }
     };
 

@@ -6,6 +6,10 @@ import AdminLogin from "./Components/Admin/AdminLogin";
 import Admin from "./Components/Admin/Admin";
 import CreateNewStudent from "./Components/Admin/CreateNewStudent";
 import CreateNewTeacher from "./Components/Admin/CreateNewTeacher";
+import StudentLogin from "./Components/Student/StudentLogin";
+import MyPage from "./Components/Student/MyPage";
+import TeacherLogin from "./Components/Teacher/TeacherLogin";
+import Teacher from "./Components/Teacher/Teacher";
 
 function App() {
   return (
@@ -27,6 +31,19 @@ function App() {
               <Route
                 path="/createteacher"
                 element={<CreateNewTeacher></CreateNewTeacher>}
+              ></Route>
+              <Route
+                path="/studentlogin"
+                element={<StudentLogin></StudentLogin>}
+              ></Route>
+              <Route path="/mypage" element={<MyPage></MyPage>}></Route>
+              <Route
+                path="/teacher/:username"
+                element={<Teacher></Teacher>}
+              ></Route>
+              <Route
+                path="/loginteacher"
+                element={<TeacherLogin></TeacherLogin>}
               ></Route>
             </Routes>
           </div>

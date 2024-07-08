@@ -20,20 +20,25 @@ function validateLogin(data) {
   return schema.validate(data);
 }
 router.post("/", async (req, res) => {
-  const { username, password } = req.body;
-  const { error } = validateLogin(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  try {
+    const { username, password } = req.body;
+    const { error } = validateLogin(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-  const admin = await Admin.findOne({ username: username });
-  if (!admin) {
-    return res.status(400).send("Invalid username or Password");
+    const admin = await Admin.findOne({ username: username });
+    if (!admin) {
+      return res.status(400).send("Invalid username or Password");
+    }
+    const validatePassword = await bcrypt.compare(password, admin.password);
+    if (!validatePassword) {
+      return res.status(400).send("Invalid username or Password!");
+    }
+    const token = admin.generateAuthToken();
+    res.status(200).send({ token });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
   }
-  const validatePassword = await bcrypt.compare(password, admin.password);
-  if (!validatePassword) {
-    return res.status(400).send("Invalid username or Password!");
-  }
-  const token = admin.generateAuthToken();
-  res.status(200).send(token);
 });
 
 module.exports = router;

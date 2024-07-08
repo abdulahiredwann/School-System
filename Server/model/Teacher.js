@@ -54,6 +54,17 @@ function validateTeacher(teacher) {
 
   return schema.validate(teacher);
 }
+function validateRegisterTeacher(teacher) {
+  const schema = Joi.object({
+    teacherName: Joi.string().min(3).max(100).required(),
+    username: Joi.string().min(4).max(100).required(),
+    subject: Joi.optional(),
+    grades: Joi.optional(),
+  });
+
+  return schema.validate(teacher);
+}
 
 module.exports.Teacher = Teacher;
 module.exports.validate = validateTeacher;
+module.exports.validateRegisterTeacher = validateRegisterTeacher;

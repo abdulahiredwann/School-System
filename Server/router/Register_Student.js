@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const { Student, validate, validateUpdate } = require("../model/Student");
+const {
+  Student,
+  validateRegisterStudent,
+  validateUpdate,
+} = require("../model/Student");
 const { Grade } = require("../model/Grade");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
@@ -14,28 +18,29 @@ function isValidObjectId(id) {
 // Register New Student only for admin
 router.post("/", [auth, admin], async (req, res) => {
   try {
-    let { studentName, username, password, grade } = req.body;
-
-    const { error } = validate(req.body);
+    let { studentName, username, grade, gender } = req.body;
+    const defaultPassword = "12345678"; // Default password
+    const { error } = validateRegisterStudent(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    if (!isValidObjectId(grade)) {
-      return res.status(400).send("Invalid Teacher Id");
+    // if (!isValidObjectId(grade)) {
+    //   return res.status(400).send("Invalid Teacher Id");
+    // }
+
+    let existingStudent = await Student.findOne({ username: username });
+    if (existingStudent) {
+      console.error("Username already taken:", username);
+      return res.status(400).send("Username already taken");
     }
 
-    let existingStudent = await Student.findOne({
-      username: username,
-    });
-    if (existingStudent) {
-      return res.status(400).send("Username alredy taken");
-    }
     const salt = await bcrypt.genSalt(10);
-    password = await bcrypt.hash(password, salt);
+    const password = await bcrypt.hash(defaultPassword, salt);
 
     let newstudent = new Student({
       studentName: studentName,
       username: username,
       password: password,
       grade: grade,
+      gender: gender,
     });
 
     let grades = await Grade.findById(grade);

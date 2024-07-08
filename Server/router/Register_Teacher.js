@@ -1,5 +1,9 @@
 const express = require("express");
-const { Teacher, validate } = require("../model/Teacher");
+const {
+  Teacher,
+  validate,
+  validateRegisterTeacher,
+} = require("../model/Teacher");
 const _ = require("lodash");
 const router = express.Router();
 const mongoose = require("mongoose");
@@ -13,9 +17,10 @@ function isValidObjectId(id) {
 // Register New Teacher only for admin
 router.post("/", [auth, admin], async (req, res) => {
   try {
-    let { teacherName, username, password, grades, subject } = req.body;
+    let { teacherName, username, grades, subject } = req.body;
+    const defaultPassword = "12345678";
 
-    const { error } = validate(req.body); // Validate the request body
+    const { error } = validateRegisterTeacher(req.body); // Validate the request body
     if (error) return res.status(400).send(error.details[0].message);
     let newusername = await Teacher.findOne({ username: username });
 
@@ -30,7 +35,7 @@ router.post("/", [auth, admin], async (req, res) => {
       return res.status(400).send("Invalid Subject ID");
     }
     const salt = await bcrypt.genSalt(10);
-    password = await bcrypt.hash(password, salt);
+    let password = await bcrypt.hash(defaultPassword, salt);
 
     // Create a new Teacher instance
     let newTeacher = new Teacher({

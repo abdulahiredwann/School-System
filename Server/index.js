@@ -11,9 +11,10 @@ const loginTeacher = require("./router/Login_Teacher");
 const loginStudent = require("./router/Login_Student");
 const adminLogin = require("./router/Login_Admin");
 const admin = require("./router/Admin");
-
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // sudo systemctl start mongodb

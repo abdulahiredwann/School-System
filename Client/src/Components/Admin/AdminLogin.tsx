@@ -7,7 +7,7 @@ import AdminLoginService from "../../Services/adminLoginService";
 const schema = z.object({
   username: z
     .string()
-    .min(5, { message: "username must be more than 5 characters." })
+    .min(5, { message: "Username must be more than 5 characters." })
     .max(100),
   password: z
     .string()
@@ -16,23 +16,26 @@ const schema = z.object({
 });
 
 type LoginFormData = z.infer<typeof schema>;
+
 function AdminLogin() {
-  const run = async (data: LoginFormData) => {
-    try {
-      await AdminLoginService(data);
-      navigate("/admin");
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const navigate = useNavigate();
-  // const {error, setError} = useState("")
   const {
     reset,
     formState: { errors },
     register,
     handleSubmit,
   } = useForm<LoginFormData>({ resolver: zodResolver(schema) });
+
+  const run = async (data: LoginFormData) => {
+    try {
+      await AdminLoginService(data);
+      navigate("/admin");
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
+
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">

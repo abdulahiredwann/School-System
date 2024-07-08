@@ -1,28 +1,27 @@
-import apiClient from "./api-client"
+import api from "./api-login";
 
-interface LoginResponse{
-    token?:string
-    message?:string
+interface LoginResponse {
+  token?: string;
+  message?: string;
 }
 
+async function AdminLoginService(data: any) {
+    const { username, password } = data;
 
-async function AdminLoginService(data:any){
-    const{ email, password} = data
+    try {
+        const response = await api.post<LoginResponse>('/adminlogin', { username, password });
 
-    try{
-        const response = await apiClient.post<LoginResponse>('/adminlogin', {email, password})
-
-        if(response.data.token){
-            localStorage.setItem('x-auth-token', response.data.token)
-
-        
-        }else{
-            throw new Error(`Login Failed:${response.data.message} || "No token recived"`)
+        if (response.data.token) {
+            localStorage.setItem('x-auth-token', response.data.token);
+            
+            
+        } else {
+            throw new Error(`Login Failed: ${response.data.message || "No token received."}`);
         }
-    }
-    catch(err){
-        throw new Error("Login Failed!")
+
+    } catch (err:any) {
+        throw new Error(err);
     }
 }
 
-export default AdminLoginService
+export default AdminLoginService;

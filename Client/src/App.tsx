@@ -4,6 +4,8 @@ import NavBar from "./Components/NavBar/NavBar";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import AdminLogin from "./Components/Admin/AdminLogin";
 import Admin from "./Components/Admin/Admin";
+import CreateNewStudent from "./Components/Admin/CreateNewStudent";
+import CreateNewTeacher from "./Components/Admin/CreateNewTeacher";
 
 function App() {
   return (
@@ -18,6 +20,14 @@ function App() {
                 element={<AdminLogin></AdminLogin>}
               ></Route>
               <Route path="/admin" element={<Admin></Admin>}></Route>
+              <Route
+                path="/createstudent"
+                element={<CreateNewStudent></CreateNewStudent>}
+              ></Route>
+              <Route
+                path="/createteacher"
+                element={<CreateNewTeacher></CreateNewTeacher>}
+              ></Route>
             </Routes>
           </div>
         </BrowserRouter>

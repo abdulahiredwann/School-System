@@ -8,7 +8,7 @@ const { admin, auth } = require("../Middleware/AuthAdmin");
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
-// Get All Grades
+// Get All Grades only for admin
 router.get("/", [auth, admin], async (req, res) => {
   try {
     const grades = await Grade.find().sort("gradeName");
@@ -19,6 +19,15 @@ router.get("/", [auth, admin], async (req, res) => {
   }
 
   res.s;
+});
+router.get("/listofgrade", async (req, res) => {
+  try {
+    let list = await Grade.find().sort("gradeName");
+    res.status(200).send(list);
+  } catch (err) {
+    res.status(500).send("Server Error");
+    console.log(err);
+  }
 });
 
 // Get Grade by Name

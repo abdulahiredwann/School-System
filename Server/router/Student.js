@@ -116,6 +116,7 @@ router.post("/", [auth, admin], async (req, res) => {
       username: req.body.username,
       password: req.body.password,
       grade: req.body.grade,
+      gender: req.body.gender,
       results: req.body.results,
     });
 

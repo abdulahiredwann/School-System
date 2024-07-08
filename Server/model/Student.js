@@ -15,6 +15,10 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
+  gender: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
@@ -45,7 +49,21 @@ function vaildateStudent(student) {
     studentName: Joi.string().required(),
     username: Joi.string().required().min(4).max(100),
     password: Joi.string().required().min(6).max(1024),
+
     grade: Joi.required(),
+    gender: Joi.required(),
+  });
+
+  return schema.validate(student);
+}
+
+function validateRegisterStudent(student) {
+  const schema = Joi.object({
+    studentName: Joi.string().required(),
+    username: Joi.string().required().min(4).max(100),
+
+    grade: Joi.required(),
+    gender: Joi.required(),
   });
 
   return schema.validate(student);
@@ -63,5 +81,6 @@ function validateStudentUpdate(student) {
 
 module.exports.validate = vaildateStudent;
 module.exports.validateUpdate = validateStudentUpdate;
+module.exports.validateRegisterStudent = validateRegisterStudent;
 
 module.exports.Student = Student;

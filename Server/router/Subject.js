@@ -21,6 +21,18 @@ router.get("/", [auth], async (req, res) => {
   }
 });
 
+// Get List of subject
+
+router.get("/listsubject", async (req, res) => {
+  try {
+    const subject = await Subject.find().sort("subjectName");
+    res.send(subject);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 // Get Subject by name
 router.get("/:subjectName", [auth], async (req, res) => {
   const { subjectName } = req.params;

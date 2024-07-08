@@ -11,6 +11,7 @@ const loginTeacher = require("./router/Login_Teacher");
 const loginStudent = require("./router/Login_Student");
 const adminLogin = require("./router/Login_Admin");
 const admin = require("./router/Admin");
+const validation = require("./router/Validation");
 const cors = require("cors");
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/registerteacher", registerTeacher);
 app.use("/registerstudent", registerStudent);
 app.use("/loginteacher", loginTeacher);
 app.use("/loginstudent", loginStudent);
+app.use("/verify", validation);
 
 app.use("/admin", admin);
 app.use("/adminlogin", adminLogin);

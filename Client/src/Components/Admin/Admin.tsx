@@ -1,5 +1,7 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useValidation from "../../hooks/useValidation";
 
 function Admin() {
   const navigate = useNavigate();
@@ -7,11 +9,14 @@ function Admin() {
   useEffect(() => {
     try {
       const token = localStorage.getItem("x-auth-token");
-      if (!token) throw new Error("No Token found");
+      if (!token) {
+        navigate("/adminlogin");
+      }
     } catch (err) {
       console.log(err);
     }
   }, []);
+  useValidation();
   return (
     <>
       <div className="justify-content-between ">

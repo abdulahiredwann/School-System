@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import useValidation from "../../hooks/useValidation";
 import api from "../../Services/api-login";
 import ResultList from "./ResultList";
+import useTeacherValidation from "../../hooks/useTeacherValidation";
 
 export interface Info {
   teacherName: string;
@@ -17,10 +18,10 @@ function Teacher() {
   // const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const { username } = useParams<{ username: string }>();
+  const { username } = useParams<{ username: string | any }>();
   const [sub, setSub] = useState<string>("");
   useValidation();
-
+  useTeacherValidation({ username });
   useEffect(() => {
     const fetchGrades = async () => {
       try {

@@ -35,7 +35,7 @@ const teacherSchema = new Schema({
 
 teacherSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
-    { _id: this._id, teacherName: this.teacherName },
+    { _id: this._id, username: this.username, teacherName: this.teacherName },
     process.env.jwtPrivateKey
   );
   return token;

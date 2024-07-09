@@ -23,7 +23,7 @@ const useTeacherValidation = ({ username }: Props) => {
         if (!response.data.validTeacher) throw new Error("Invalid Token");
       } catch (err) {
         console.error(err); // Log any errors for debugging
-        navigate("/"); // Redirect to login page if token is invalid
+        navigate("/loginteacher"); // Redirect to login page if token is invalid
       }
     };
 

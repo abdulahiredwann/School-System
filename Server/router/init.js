@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
         // Initialize or update results for each subject (example)
         student.results = [
           {
-            subject: "668bc59e5bc2ebde35af0ad6",
+            subject: "668bc5a45bc2ebde35af0ad9",
             exams: {
               midExam1: null,
               midExam2: null,
@@ -30,6 +30,15 @@ router.post("/", async (req, res) => {
               finalExam: null,
             },
           },
+          {
+            subject: "668bc5ac5bc2ebde35af0adc",
+            exams: {
+              midExam1: null,
+              midExam2: null,
+              finalExam: null,
+            },
+          },
+
           // Add more subjects as needed
         ];
 

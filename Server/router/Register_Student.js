@@ -10,6 +10,7 @@ const { Grade } = require("../model/Grade");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const { admin, auth } = require("../Middleware/AuthAdmin");
+const initializeResults = require("./resinit");
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -34,6 +35,7 @@ router.post("/", [auth, admin], async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(defaultPassword, salt);
+    const results = await initializeResults();
 
     let newstudent = new Student({
       studentName: studentName,
@@ -41,6 +43,7 @@ router.post("/", [auth, admin], async (req, res) => {
       password: password,
       grade: grade,
       gender: gender,
+      results: results,
     });
 
     let grades = await Grade.findById(grade);

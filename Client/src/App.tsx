@@ -7,9 +7,10 @@ import Admin from "./Components/Admin/Admin";
 import CreateNewStudent from "./Components/Admin/CreateNewStudent";
 import CreateNewTeacher from "./Components/Admin/CreateNewTeacher";
 import StudentLogin from "./Components/Student/StudentLogin";
-import MyPage from "./Components/Student/MyPage";
+import MyPage from "./Components/Student/Student";
 import TeacherLogin from "./Components/Teacher/TeacherLogin";
 import Teacher from "./Components/Teacher/Teacher";
+import Student from "./Components/Student/Student";
 
 function App() {
   return (
@@ -36,7 +37,10 @@ function App() {
                 path="/studentlogin"
                 element={<StudentLogin></StudentLogin>}
               ></Route>
-              <Route path="/mypage" element={<MyPage></MyPage>}></Route>
+              <Route
+                path="/student/:username"
+                element={<Student></Student>}
+              ></Route>
               <Route
                 path="/teacher/:username"
                 element={<Teacher></Teacher>}

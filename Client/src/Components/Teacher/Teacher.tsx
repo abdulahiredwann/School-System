@@ -15,11 +15,9 @@ function Teacher() {
   const [info, setInfo] = useState<Info | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string>("");
   const [selectedGradeId, setSelectedGradeId] = useState<string>("");
-  // const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
   const [error, setError] = useState<string>("");
   const { username } = useParams<{ username: string | any }>();
-  const [sub, setSub] = useState<string>("");
   useValidation();
   useTeacherValidation({ username });
   useEffect(() => {
@@ -36,7 +34,6 @@ function Teacher() {
 
   useEffect(() => {
     if (info && info.subject.length > 0) {
-      setSub(info.subject[0].subjectName);
       setSelectedSubjectId(info.subject[0]._id);
     }
   }, [info]);

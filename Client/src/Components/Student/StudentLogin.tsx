@@ -25,7 +25,7 @@ function StudentLogin() {
   const run = async (data: StudentLoginForm) => {
     try {
       await LoginStudentService(data);
-      navigate("/mypage");
+      navigate(`/student/${data.username}`);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "An error occured");

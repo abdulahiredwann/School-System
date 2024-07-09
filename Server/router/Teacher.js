@@ -30,15 +30,23 @@ router.get("/:username", async (req, res) => {
 
     let isvalid = await Teacher.findOne({ username: username });
     if (!isvalid) {
-      return res.status(400).send("Invald uername");
+      return res.status(400).send("Invalid username");
     }
 
-    let teacher = await Teacher.findOne({ username: username });
+    let teacher = await Teacher.findOne({ username: username })
+      .populate("grades", "gradeName")
+      .populate("subject", "subjectName");
+
+    if (!teacher) {
+      return res.status(404).send("Teacher not found");
+    }
+
     const pickedTeachers = _.pick(teacher, [
       "teacherName",
       "grades",
       "subject",
     ]);
+
     res.status(200).send(pickedTeachers);
   } catch (err) {
     console.log(err);

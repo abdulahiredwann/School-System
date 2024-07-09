@@ -4,10 +4,23 @@ const ObjectId = Schema.Types.ObjectId;
 const Joi = require("joi");
 const { result } = require("lodash");
 const jwt = require("jsonwebtoken");
+
 const resultSchema = new Schema({
   subject: {
     type: ObjectId,
     ref: "Subject",
+    required: true,
+  },
+  exams: {
+    midExam1: {
+      type: Number,
+    },
+    midExam2: {
+      type: Number,
+    },
+    finalExam: {
+      type: Number,
+    },
   },
 });
 const studentSchema = new Schema({

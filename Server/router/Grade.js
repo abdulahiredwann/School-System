@@ -48,15 +48,18 @@ router.get("/:gradeName/students", async (req, res) => {
     const { gradeName } = req.params;
     const decodedGradeName = decodeURIComponent(gradeName);
 
-    const g = await Grade.findOne({ gradeName: decodedGradeName });
-    if (!g) {
-      return res.status(404).send("Grade Not found");
-    }
     const grade = await Grade.findOne({ gradeName: decodedGradeName }).populate(
       "students"
     );
+    if (!grade) {
+      return res.status(404).send("Grade Not Found");
+    }
+    const studentsInfo = grade.students.map((student) => ({
+      studentName: student.studentName,
+      results: student.results,
+    }));
 
-    res.status(200).send(grade.students);
+    res.status(200).send(studentsInfo);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error!");
